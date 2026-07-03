@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>YouTube Downloader Pro</title>
     <style>
-        body { margin: 0; font-family: 'Cairo', sans-serif; background: linear-gradient(135deg, #1a1a1a 0%, #4a0000 100%); background-attachment: fixed; co>
+        body { margin: 0; font-family: 'Cairo', sans-serif; background: linear-gradient(135deg, #1a1a1a 0%, #4a0000 100%); background-attachment: fixed; color: #fff; min-height: 100vh; padding-bottom: 50px; }
         .overlay { padding: 40px; text-align: center; }
         .container { max-width: 700px; margin: auto; background: rgba(0,0,0,0.7); padding: 40px; border-radius: 25px; backdrop-filter: blur(10px); }
         input { width: 80%; padding: 15px; border-radius: 10px; border: none; margin-bottom: 10px; }
@@ -24,13 +24,71 @@
             <option value="ru">Русский</option>
         </select>
     </div>
-
+    
     <div class="container">
         <h1 id="titleText">محمل فيديوهات يوتيوب</h1>
         <input type="text" id="urlInput" placeholder="ضع رابط الفيديو هنا...">
         <button class="btn" id="btnFetch" onclick="fetchInfo()">جلب المعلومات</button>
-
+        
         <div id="preview" style="display:none; margin-top:30px;">
             <img id="thumb" style="width:250px; border-radius:15px;">
             <h2 id="videoTitle"></h2>
             <select id="formatSelect" style="padding:10px; border-radius:5px;"></select><br><br>
+            <button class="btn" style="background:green;" id="btnDownload" onclick="downloadFile()">تحميل</button>
+        </div>
+    </div>
+
+    <footer id="footerText">
+        <p>تواصل معنا للدعم الفني:</p>
+        <a class="contact-link" href="https://wa.me/664089192" target="_blank">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" class="icon"> واتساب
+        </a>
+        <a class="contact-link" href="https://mail.google.com/mail/?view=cm&fs=1&to=hamoda00718@gmail.com&su=استفسار" target="_blank">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg" class="icon"> جيميل
+        </a>
+    </footer>
+</div>
+
+<script>
+    const translations = {
+        ar: { title: "محمل فيديوهات يوتيوب", placeholder: "ضع رابط الفيديو هنا...", fetch: "جلب المعلومات", download: "تحميل", footer: "تواصل معنا للدعم الفني:" },
+        en: { title: "YouTube Video Downloader", placeholder: "Paste video link here...", fetch: "Fetch Info", download: "Download", footer: "Contact us for support:" },
+        ru: { title: "YouTube Загрузчик", placeholder: "Вставьте ссылку...", fetch: "Получить инфо", download: "Скачать", footer: "Свяжитесь с нами:" }
+    };
+
+    function changeLanguage() {
+        const lang = document.getElementById('langSelect').value;
+        const t = translations[lang];
+        document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
+        document.getElementById('titleText').innerText = t.title;
+        document.getElementById('urlInput').placeholder = t.placeholder;
+        document.getElementById('btnFetch').innerText = t.fetch;
+        document.getElementById('btnDownload').innerText = t.download;
+        document.getElementById('footerText').querySelector('p').innerText = t.footer;
+    }
+
+    async function fetchInfo() {
+        const url = document.getElementById('urlInput').value;
+        const res = await fetch('http://127.0.0.1:8000/info', { method: 'POST', body: JSON.stringify({video_url: url}) });
+        const data = await res.json();
+        if(data.error) { alert("خطأ: " + data.error); return; }
+        document.getElementById('thumb').src = data.thumbnail;
+        document.getElementById('videoTitle').innerText = data.title;
+        const select = document.getElementById('formatSelect');
+        select.innerHTML = '';
+        data.resolutions.forEach(res => {
+            let opt = document.createElement('option');
+            opt.value = res; opt.innerHTML = res;
+            select.appendChild(opt);
+        });
+        document.getElementById('preview').style.display = 'block';
+    }
+
+    function downloadFile() {
+        const url = document.getElementById('urlInput').value;
+        const res = document.getElementById('formatSelect').value;
+        window.location.href = `http://127.0.0.1:8000/download?url=${encodeURIComponent(url)}&resolution=${res}`;
+    }
+</script>
+</body>
+</html>
