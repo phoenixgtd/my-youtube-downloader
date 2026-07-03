@@ -1,9 +1,10 @@
-FROM python:3.9-slim
+FROM python:3.10-slim
+
+# تحديث النظام وتثبيت ffmpeg
 RUN apt-get update && apt-get install -y ffmpeg
+
 WORKDIR /app
 COPY . .
-RUN pip install -r requirements.txt
-# إضافة منفذ التشغيل للمتغيرات البيئية
-ENV PORT=8000
-CMD gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:$PORT
-# update
+RUN pip install --no-cache-dir -r requirements.txt
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
