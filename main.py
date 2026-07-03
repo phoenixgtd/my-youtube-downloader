@@ -9,6 +9,9 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"])
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+# إعدادات الـ User-Agent للتظاهر بمتصفح حقيقي
+USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+
 @app.get("/", response_class=HTMLResponse)
 async def read_root():
     with open(os.path.join(BASE_DIR, "index.html"), "r", encoding="utf-8") as f:
@@ -19,7 +22,13 @@ async def get_info(request: Request):
     data = await request.json()
     url = data.get("video_url")
     try:
-        with yt_dlp.YoutubeDL({'quiet': True}) as ydl:
+        # إضافة إعدادات لتجنب اكتشاف البوت
+        ydl_opts = {
+            'quiet': True,
+            'user_agent': USER_AGENT,
+            'noplaylist': True,
+        }
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
             return {
                 "title": info.get("title"),
@@ -31,12 +40,14 @@ async def get_info(request: Request):
 
 @app.get("/download")
 async def download(url: str, resolution: str):
-    # إعدادات التحميل
-    output_path = f"video.mp4"
+    output_path = "video.mp4"
+    # إذا كان لديك ملف cookies.txt، قم بوضعه في مجلد المشروع وأضف 'cookiefile': 'cookies.txt' هنا
     ydl_opts = {
         'format': f'bestvideo[height<={resolution.replace("p", "")}]+bestaudio/best',
         'outtmpl': output_path,
-        'merge_output_format': 'mp4'
+        'merge_output_format': 'mp4',
+        'user_agent': USER_AGENT,
+        'noplaylist': True,
     }
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
