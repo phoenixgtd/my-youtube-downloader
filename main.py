@@ -29,6 +29,7 @@ async def get_info(request: Request):
             'user_agent': USER_AGENT,
             'cookiefile': COOKIES_PATH,
             'noplaylist': True,
+            'sleep_interval': 5, # إضافة انتظار لتجنب الحظر السريع
         }
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
