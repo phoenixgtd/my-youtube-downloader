@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>YouTube Downloader Pro</title>
+    <style>
+        body { margin: 0; font-family: 'Cairo', sans-serif; background: linear-gradient(135deg, #1a1a1a 0%, #4a0000 100%); background-attachment: fixed; co>
+        .overlay { padding: 40px; text-align: center; }
+        .container { max-width: 700px; margin: auto; background: rgba(0,0,0,0.7); padding: 40px; border-radius: 25px; backdrop-filter: blur(10px); }
+        input { width: 80%; padding: 15px; border-radius: 10px; border: none; margin-bottom: 10px; }
+        .btn { padding: 15px 30px; border-radius: 10px; border: none; cursor: pointer; background: #ff0000; color: white; font-weight: bold; }
+        .lang-box { margin-bottom: 20px; }
+        .icon { width: 24px; vertical-align: middle; margin-left: 8px; }
+        footer { margin-top: 50px; }
+        .contact-link { color: #fff; margin: 0 15px; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+<div class="overlay">
+    <div class="lang-box">
+        <select id="langSelect" onchange="changeLanguage()">
+            <option value="ar">العربية</option>
+            <option value="en">English</option>
+            <option value="ru">Русский</option>
+        </select>
+    </div>
+
+    <div class="container">
+        <h1 id="titleText">محمل فيديوهات يوتيوب</h1>
+        <input type="text" id="urlInput" placeholder="ضع رابط الفيديو هنا...">
+        <button class="btn" id="btnFetch" onclick="fetchInfo()">جلب المعلومات</button>
+
+        <div id="preview" style="display:none; margin-top:30px;">
+            <img id="thumb" style="width:250px; border-radius:15px;">
+            <h2 id="videoTitle"></h2>
+            <select id="formatSelect" style="padding:10px; border-radius:5px;"></select><br><br>
