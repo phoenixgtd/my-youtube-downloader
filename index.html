@@ -69,7 +69,6 @@
 
     async function fetchInfo() {
         const url = document.getElementById('urlInput').value;
-        // قم بتغيير الرابط إلى '/info' فقط
         const res = await fetch('/info', { 
             method: 'POST', 
             headers: {'Content-Type': 'application/json'},
@@ -92,8 +91,8 @@
     function downloadFile() {
         const url = document.getElementById('urlInput').value;
         const res = document.getElementById('formatSelect').value;
-        // قم بتغيير الرابط إلى '/download' فقط
         window.location.href = `/download?url=${encodeURIComponent(url)}&resolution=${res}`;
     }
+</script>
 </body>
 </html>
