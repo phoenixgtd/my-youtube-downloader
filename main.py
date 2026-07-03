@@ -45,17 +45,17 @@ async def download(url: str, resolution: str):
     file_id = str(uuid.uuid4())
     output_path = f"video_{file_id}.mp4"
     
+    # التعديل هنا: استخدام [height<=...] ليكون الاختيار مرناً
+    # إذا لم يجد 1080p سيختار تلقائياً 720p أو أقل المتاح
     ydl_opts = {
-        'format': 'best', # استخدم 'best' لتجنب مشاكل دمج الصوت والصورة
+        'format': f'bestvideo[height<={resolution.replace("p", "")}]+bestaudio/best[height<={resolution.replace("p", "")}]/best[height<={resolution.replace("p", "")}]',
+        'outtmpl': output_path,
+        'merge_output_format': 'mp4',
         'user_agent': USER_AGENT,
         'cookiefile': COOKIES_PATH,
         'noplaylist': True,
         'nocheckcertificate': True,
-        'extractor_args': {
-            'youtube': {
-                'player_client': 'web', # جرب 'web' بدلاً من 'android'
-            }
-        },
+        'extractor_args': {'youtube': {'player_client': 'web'}},
     }
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
